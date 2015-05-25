@@ -1,6 +1,7 @@
 #project
 *.pyc
 *.log
+torrent_broker/config.py
 
 # IntelliJ IDEA
 .idea
