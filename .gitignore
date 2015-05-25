@@ -1,0 +1,7 @@
+#project
+*.pyc
+*.log
+
+# IntelliJ IDEA
+.idea
+*.iml
