@@ -37,11 +37,10 @@ def kill_process(pid):
     os.kill(pid, signal.SIGTERM)
     start_time = time.time()
     while process_alive(pid):
-        if time.time() - start_time < CHECK_PROCESS_INTERVAL:
-            time.sleep(1)
-        else:
+        if time.time() - start_time > CHECK_PROCESS_INTERVAL:
             log.debug('Cant stop process %s, sending SIGKILL', pid)
             os.kill(pid, signal.SIGKILL)
+        time.sleep(1)
 
 
 def process_pid():
@@ -53,7 +52,6 @@ def process_pid():
             kill_process(exists_pid)
         else:
             log.debug('Process %s is not alive', exists_pid)
-        os.remove(config.PID_FILE)
 
     try:
         with open(config.PID_FILE, 'w') as f:
@@ -70,7 +68,6 @@ def cleanup():
             log.debug('Pid-file removed: %s', config.PID_FILE)
         except OSError:
             log.warning('Cannot remove pid-file: %s', config.PID_FILE)
-    log.debug('Exit;')
 
 
 def daemonize():
@@ -83,6 +80,7 @@ def daemonize():
         sys.exit(13)
     os.setsid()
     os.umask(0)
+    log.debug('### torrent-broker starting ###')
     process_pid()
 
     redirect_to_devnull()

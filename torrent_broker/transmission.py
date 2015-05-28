@@ -44,22 +44,25 @@ class TransmissionRpc(object):
                 return self._send_response(method, arguments)
             raise
 
-    def add_torrent(self, url, meta=None):
-        if meta:
-            meta = meta[len('meta:'):]
-
-            log.debug('Stub: adding torrent as base64: %s', meta)
-        else:
-            log.debug('Stub: adding torrent as url: %s', url)
+    def torrent_add(self, torrent):
+        """
+        :type torrent: util.Torrent
+        """
+        log.debug('Stub; adding torrent: %s',
+                  torrent.get_transmission_payload())
 
     def torrent_info(self):
         pass
 
     def session_stats(self):
-        return self._send_response('session-stats')
+        resp = self._send_response('session-stats')
+        if resp['result'] != 'success':
+            raise RuntimeError('Transmission daemon is not available')
 
     def port_test(self):
-        return self._send_response('port-test')
+        resp = self._send_response('port-test')
+        if resp['result'] != 'success':
+            raise RuntimeError('Transmission daemon is not available')
 
 
 if __name__ == '__main__':

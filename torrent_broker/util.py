@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import threading
-import functools
 import logging
 
 from torrent_broker import config
@@ -26,3 +25,21 @@ def configure_logger():
             lh.setLevel(getattr(logging, params['level']))
             lh.setFormatter(logging.Formatter(params['formatter']))
             log.addHandler(lh)
+
+
+class Torrent(object):
+
+    def __init__(self, url=None, metainfo=None):
+        self.url = url
+        self.metainfo = metainfo
+
+    def get_transmission_payload(self):
+        payload = {}
+        if self.url:
+            payload = {'file': self.url}
+        if self.metainfo:
+            payload = {'metainfo': self.metainfo}
+        return payload
+
+    def __repr__(self):
+        return self.url or self.metainfo
