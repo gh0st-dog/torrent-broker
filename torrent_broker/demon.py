@@ -62,21 +62,8 @@ class TorrentDaemon(object):
             log.exception('Cant import module %s', module_name)
             raise
 
-
-def configure_logger():
-    for logger_name, params in config.Loggers.iteritems():
-        if params.get('enabled', False):
-            l_class = getattr(logging, params['class'])
-            if isinstance(params['args'], list):
-                lh = l_class(*params['args'])
-            else:
-                lh = l_class(**params['args'])
-            lh.setLevel(getattr(logging, params['level']))
-            lh.setFormatter(logging.Formatter(params['formatter']))
-            log.addHandler(lh)
-
 if __name__ == '__main__':
     util.set_main_thread_name()
-    configure_logger()
+    util.configure_logger()
     daemonize.daemonize()
     TorrentDaemon().process()

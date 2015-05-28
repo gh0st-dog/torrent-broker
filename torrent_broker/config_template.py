@@ -32,6 +32,8 @@ Modules = {
 }
 
 TRANSMISSION_WATCH_DIR = ''
+TRANSMISSION_HOST = ''
+TRANSMISSION_PORT = ''
 
 PID_FILE = 'torrent_broker.pid'
 
