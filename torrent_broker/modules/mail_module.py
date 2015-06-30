@@ -9,8 +9,7 @@ import logging
 import threading
 
 from torrent_broker import config
-from torrent_broker.transmission import TransmissionRpc
-from torrent_broker.util import Torrent
+from torrent_broker.util import Torrent, load_torrent_client
 
 __author__ = 'buyvich'
 
@@ -18,13 +17,14 @@ log = logging.getLogger()
 
 class EmailModule(threading.Thread):
 
-    def __init__(self, host, login, password):
+    def __init__(self, torrent_client, host, login, password):
         super(EmailModule, self).__init__()
         mail_client = imaplib.IMAP4_SSL(host)
         mail_client.login(login, password)
         mail_client.select(mailbox='torrents', readonly=False)
         self.mail_client = mail_client
-        self.transmission_client = TransmissionRpc()
+
+        self.torrent_client = load_torrent_client(torrent_client)
 
         self.running = True
 
@@ -42,9 +42,9 @@ class EmailModule(threading.Thread):
         return posts_id
 
     def _process_torrents(self, torrents):
-        self.transmission_client.port_test()  # check transmission
+        self.torrent_client.port_test()  # check transmission
         for torrent in torrents:
-            self.transmission_client.torrent_add(torrent)
+            self.torrent_client.torrent_add(torrent)
 
     def run(self):
         log.debug('Run worker: %s', self.getName())
@@ -80,16 +80,7 @@ class EmailModule(threading.Thread):
                         break
                     torrents.append(Torrent(url=line.strip()))
             elif content_type == 'application/x-bittorrent':
-                if config.TRANSMISSION_WATCH_DIR:
-                    filename = part.get_filename()
-                    log.debug('get file: %s', filename)
-                    full_name = os.path.join(
-                        config.TRANSMISSION_WATCH_DIR, filename)
-                    with open(full_name, mode='w') as f:
-                        f.write(part.get_payload(decode=True))
-                    log.debug('file saved to: %s', full_name)
-                else:
-                    torrent = base64.encodestring(
-                        part.get_payload(decode=True))
-                    torrents.append(Torrent(metainfo=torrent))
+                torrent = base64.encodestring(
+                    part.get_payload(decode=True))
+                torrents.append(Torrent(metainfo=torrent))
         return torrents

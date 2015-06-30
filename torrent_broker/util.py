@@ -5,6 +5,7 @@ import logging
 
 from torrent_broker import config
 
+
 __author__ = 'buyvich'
 
 log = logging.getLogger()
@@ -26,12 +27,27 @@ def configure_logger():
             lh.setFormatter(logging.Formatter(params['formatter']))
             log.addHandler(lh)
 
+def get_config():
+    return config
+
+
+def load_torrent_client(client):
+    from torrent_broker import torrent_clients
+    if isinstance(client, basestring):
+        client = getattr(torrent_clients, client, None)
+        if not client:
+            client = torrent_clients.base.BaseTorrentClient
+    client_obj = client()
+    client_obj.check()
+    return client_obj
+
 
 class Torrent(object):
 
-    def __init__(self, url=None, metainfo=None):
+    def __init__(self, url=None, metainfo=None, filename=None):
         self.url = url
         self.metainfo = metainfo
+        self.filename = filename
 
     def get_transmission_payload(self):
         payload = {}

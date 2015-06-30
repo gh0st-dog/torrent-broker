@@ -41,7 +41,7 @@ def kill_process(pid):
             log.debug('Cant stop process %s, sending SIGKILL', pid)
             os.kill(pid, signal.SIGKILL)
         time.sleep(1)
-
+    log.debug('%s killed', pid)
 
 def process_pid():
     pid = os.getpid()
@@ -56,9 +56,9 @@ def process_pid():
     try:
         with open(config.PID_FILE, 'w') as f:
             f.write(str(pid))
+        log.debug('Create PID file: %s', config.PID_FILE)
     except Exception as ex:
-        log.warning('Cannot create PID file %s. %s', config.PID_FILE,
-                    ex)
+        log.warning('Cannot create PID file %s. %s', config.PID_FILE, ex)
 
 def cleanup():
     log.debug('Cleanup before exit')

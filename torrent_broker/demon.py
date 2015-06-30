@@ -3,10 +3,8 @@
 import time
 import signal
 import logging
-import threading
 
 from torrent_broker import util
-from torrent_broker import config
 from torrent_broker import modules
 from torrent_broker import daemonize
 
@@ -25,6 +23,7 @@ class TorrentDaemon(object):
         self.workers = []
 
     def process(self):
+        config = util.get_config()
         modules = config.Modules
         for m_name, m_params in modules.iteritems():
             params = m_params.copy()

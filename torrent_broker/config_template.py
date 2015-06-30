@@ -27,7 +27,8 @@ Modules = {
         'class': 'EmailModule',
         'host': u'imap.yandex.ru',
         'login': u'',
-        'password': u''
+        'password': u'',
+        'torrent_client': '',
     },
 }
 

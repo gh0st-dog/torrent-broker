@@ -2,6 +2,7 @@
 *.pyc
 *.log
 torrent_broker/config.py
+*.pid
 
 # IntelliJ IDEA
 .idea
