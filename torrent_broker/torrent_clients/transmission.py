@@ -96,7 +96,7 @@ class Transmission(BaseTorrentClient):
     def port_test(self):
         self._check_result(self._send_response('port-test'))
 
-    def test(self):
+    def check(self):
         config = util.get_config()
         watch_dir = getattr(config, 'TRANSMISSION_WATCH_DIR', None)
         if watch_dir and not os.path.exists(watch_dir):
@@ -107,5 +107,5 @@ class Transmission(BaseTorrentClient):
 if __name__ == '__main__':
     log.setLevel(logging.DEBUG)
     util.configure_logger()
-    res = Transmission().test()
+    res = Transmission().check()
     pprint.pprint(res)

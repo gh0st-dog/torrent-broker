@@ -33,10 +33,12 @@ def get_config():
 
 def load_torrent_client(client):
     from torrent_broker import torrent_clients
+    log.debug('load torrent client: %s', client)
     if isinstance(client, basestring):
         client = getattr(torrent_clients, client, None)
         if not client:
             client = torrent_clients.base.BaseTorrentClient
+    log.debug('client class: %s', client)
     client_obj = client()
     client_obj.check()
     return client_obj

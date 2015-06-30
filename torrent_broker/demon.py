@@ -26,15 +26,18 @@ class TorrentDaemon(object):
         config = util.get_config()
         modules = config.Modules
         for m_name, m_params in modules.iteritems():
-            params = m_params.copy()
-            module_class = self._load_module(params['class'])
-            params.pop('class')
-            worker = module_class(**params)
-            worker.setName(m_name)
-            log.debug('Configure worker %s (module %s) with params: %s',
-                m_name, module_class.__name__, params)
-            self.workers.append(worker)
-            worker.start()
+            try:
+                params = m_params.copy()
+                module_class = self._load_module(params['class'])
+                params.pop('class')
+                worker = module_class(**params)
+                worker.setName(m_name)
+                log.debug('Configure worker %s (module %s) with params: %s',
+                    m_name, module_class.__name__, params)
+                self.workers.append(worker)
+                worker.start()
+            except Exception:
+                log.exception('Error while starting worker')
 
         while self.workers_alive():
             time.sleep(WORKER_CHECK_TIMEOUT)
